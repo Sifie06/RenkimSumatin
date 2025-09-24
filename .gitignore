@@ -44,14 +44,22 @@ Installer/obj/
 **/obj/
 **/bin/
 
+# Windows packaging artifacts
+Packaging/**/AppPackages/
+Packaging/**/BundleArtifacts/
+*.wixpdb
+*.cab
+*.msi
+*.msix
+*.msixbundle
+*.appx
+*.appxbundle
+
 # OS
 .DS_Store
 Thumbs.db
 
 # Tooling
-*.wixpdb
-*.cab
-*.msi
 
 # Secrets
 *.pfx
