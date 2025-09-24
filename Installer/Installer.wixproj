@@ -9,11 +9,11 @@
     <Description>Renkim Sumatin WPF Application</Description>
   </PropertyGroup>
 
-  <!-- Publish the WPF app before building MSI -->
-  <Target Name="PublishApp" BeforeTargets="Build">
+  <!-- Publish the WPF app before building MSI (skip if already published by CI step) -->
+  <Target Name="PublishApp" BeforeTargets="Build" Condition="!Exists('$(MSBuildThisFileDirectory)AppPublish\\renkimsumatin.exe')">
     <MSBuild Projects="..\renkimsumatin.csproj"
              Targets="Publish"
-             Properties="Configuration=Release;RuntimeIdentifier=win-x64;SelfContained=true;PublishSingleFile=true;PublishTrimmed=false;PublishDir=$(MSBuildThisFileDirectory)AppPublish\" />
+             Properties="Configuration=Release;RuntimeIdentifier=win-x64;SelfContained=true;PublishSingleFile=false;PublishTrimmed=false;PublishDir=$(MSBuildThisFileDirectory)AppPublish\" />
   </Target>
 
   <ItemGroup>

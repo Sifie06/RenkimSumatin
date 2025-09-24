@@ -7,7 +7,7 @@
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="Renkim Sumatin">
         <Component Id="MainExeComponent" Guid="5e5b34e3-0f8a-4d1e-9b38-1aee6cc0d9a8">
-          <File Id="MainExe" Source="AppPublish\renkimsumatin.exe" />
+          <File Id="MainExe" Source="$(var.ProjectDir)AppPublish\renkimsumatin.exe" />
         </Component>
       </Directory>
     </StandardDirectory>

@@ -22,23 +22,45 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Dotnet info
+        run: dotnet --info
+
       - name: Restore dependencies (WPF app)
         run: dotnet restore ./renkimsumatin.csproj
 
       - name: Restore dependencies (Installer)
         run: dotnet restore ./Installer/Installer.wixproj
 
-      - name: Build WPF app (Release)
-        run: dotnet build ./renkimsumatin.csproj -c Release --no-restore
+      - name: Publish WPF app files for MSI (win-x64, self-contained)
+        run: >-
+          dotnet publish ./renkimsumatin.csproj -c Release
+          -r win-x64 --self-contained true /p:UseAppHost=true /p:PublishSingleFile=false /p:PublishTrimmed=false
+          -o ./Installer/AppPublish
+
+      - name: Normalize EXE name to expected 'renkimsumatin.exe'
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path Installer/AppPublish -Filter *.exe | Select-Object -First 1
+          if (-not $exe) { throw 'No EXE found in Installer/AppPublish after publish.' }
+          if ($exe.Name -ne 'renkimsumatin.exe') {
+            Copy-Item $exe.FullName (Join-Path $exe.DirectoryName 'renkimsumatin.exe') -Force
+          }
+
+      - name: List AppPublish directory
+        shell: pwsh
+        run: |
+          Write-Host "Listing Installer/AppPublish:";
+          Get-ChildItem -Recurse -File Installer/AppPublish | Select-Object FullName
+
+      - name: Verify AppPublish content
+        shell: pwsh
+        run: |
+          if (-not (Test-Path 'Installer/AppPublish/renkimsumatin.exe')) {
+            throw 'renkimsumatin.exe was not published to Installer/AppPublish. See previous step for listing.'
+          }
 
       - name: Build MSI (WiX)
         run: dotnet build ./Installer/Installer.wixproj -c Release --no-restore
-
-      - name: Publish WPF app self-contained (win-x64)
-        run: >-
-          dotnet publish ./renkimsumatin.csproj -c Release
-          -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false
-          -o ./publish/win-x64
 
       - name: Upload MSI artifact
         uses: actions/upload-artifact@v4
@@ -47,11 +69,11 @@ jobs:
           path: |
             Installer/bin/x64/Release/*.msi
 
-      - name: Upload Published App (win-x64)
+      - name: Upload AppPublish folder (for debugging)
         uses: actions/upload-artifact@v4
         with:
-          name: RenkimSumatin-Publish-win-x64
-          path: publish/win-x64
+          name: AppPublish-Contents
+          path: Installer/AppPublish
 
   release:
     name: Release on tag
