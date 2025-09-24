@@ -1,0 +1,152 @@
+﻿<Window x:Class="renkimsumatin.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:renkimsumatin.ViewModels"
+        xmlns:views="clr-namespace:renkimsumatin.Views"
+        xmlns:converters="clr-namespace:renkimsumatin.Converters"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        mc:Ignorable="d"
+        Title="RenkimSumatin - Student Grading System"
+        Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <Style x:Key="NavButtonStyle" TargetType="RadioButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Foreground" Value="#4B5563"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="Margin" Value="4,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="1"
+                                CornerRadius="6">
+                            <ContentPresenter Content="{TemplateBinding Content}"
+                                              Margin="{TemplateBinding Padding}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="#3B82F6"/>
+                    <Setter Property="Foreground" Value="White"/>
+                </Trigger>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#EFF6FF"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar -->
+        <Border Grid.Column="0" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="0,0,1,0">
+            <StackPanel>
+                <!-- Logo -->
+                <StackPanel Orientation="Horizontal" Margin="20,20" HorizontalAlignment="Left">
+                    <Border Width="32" Height="32" Background="#2563EB" CornerRadius="8">
+                        <TextBlock Text="📊" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <TextBlock Text="RenkimSumatin" FontSize="20" FontWeight="Bold" Margin="10,0,0,0"
+                               Foreground="#1E293B" VerticalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Navigation -->
+                <StackPanel Margin="10,0">
+                    <RadioButton Content="Students" GroupName="Nav"
+                                 IsChecked="{Binding ActiveModule, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Students}"
+                                 Style="{StaticResource NavButtonStyle}" />
+                    <RadioButton Content="Subjects" GroupName="Nav"
+                                 IsChecked="{Binding ActiveModule, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Subjects}"
+                                 Style="{StaticResource NavButtonStyle}" />
+                    <RadioButton Content="Assessments" GroupName="Nav"
+                                 IsChecked="{Binding ActiveModule, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Assessments}"
+                                 Style="{StaticResource NavButtonStyle}" />
+                    <RadioButton Content="Scores" GroupName="Nav"
+                                 IsChecked="{Binding ActiveModule, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Scores}"
+                                 Style="{StaticResource NavButtonStyle}" />
+                    <RadioButton Content="Reports" GroupName="Nav"
+                                 IsChecked="{Binding ActiveModule, Converter={StaticResource EnumToBoolConverter}, ConverterParameter=Reports}"
+                                 Style="{StaticResource NavButtonStyle}" />
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" Background="White" Padding="20" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1">
+                <TextBlock Text="{Binding ModuleTitle}" FontSize="24" FontWeight="Semibold"
+                           Foreground="#374151" VerticalAlignment="Center" />
+            </Border>
+
+            <!-- Content Area -->
+            <Grid Grid.Row="1" Background="#F1F5F9">
+                <ContentControl>
+                    <ContentControl.Resources>
+                        <DataTemplate DataType="{x:Type vm:StudentsViewModel}">
+                            <views:StudentsView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:SubjectsViewModel}">
+                            <views:SubjectsView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:AssessmentsViewModel}">
+                            <views:AssessmentsView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:ScoresViewModel}">
+                            <views:ScoresView />
+                        </DataTemplate>
+                        <DataTemplate DataType="{x:Type vm:ReportsViewModel}">
+                            <views:ReportsView />
+                        </DataTemplate>
+                    </ContentControl.Resources>
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Content" Value="{Binding StudentsViewModel}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ActiveModule}" Value="Students">
+                                    <Setter Property="Content" Value="{Binding StudentsViewModel}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ActiveModule}" Value="Subjects">
+                                    <Setter Property="Content" Value="{Binding SubjectsViewModel}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ActiveModule}" Value="Assessments">
+                                    <Setter Property="Content" Value="{Binding AssessmentsViewModel}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ActiveModule}" Value="Scores">
+                                    <Setter Property="Content" Value="{Binding ScoresViewModel}" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ActiveModule}" Value="Reports">
+                                    <Setter Property="Content" Value="{Binding ReportsViewModel}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

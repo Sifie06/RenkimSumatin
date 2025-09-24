@@ -1,0 +1,15 @@
+﻿<Application x:Class="renkimsumatin.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:renkimsumatin.Converters"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <converters:NotNullToVisibilityConverter x:Key="NotNullToVisibilityConverter"/>
+        <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
+        <converters:ScoreToGradeConverter x:Key="ScoreToGradeConverter"/>
+        <converters:NullToNAConverter x:Key="NullToNAConverter"/>
+        <converters:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+    </Application.Resources>
+</Application>

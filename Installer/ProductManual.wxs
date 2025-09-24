@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Renkim Sumatin" Manufacturer="Renkim" Version="1.0.0.0" UpgradeCode="a6a0f8a1-1c7b-4f3c-9f61-6a4b9bbf2e5e" Scope="perMachine" Language="1033">
+    <SummaryInformation Description="Renkim Sumatin WPF Application" />
+    <MediaTemplate EmbedCab="yes" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Renkim Sumatin">
+        <Component Id="MainExeComponent" Guid="5e5b34e3-0f8a-4d1e-9b38-1aee6cc0d9a8">
+          <File Id="MainExe" Source="AppPublish\renkimsumatin.exe" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <Feature Id="MainFeature" Title="Main Feature">
+      <ComponentRef Id="MainExeComponent" />
+    </Feature>
+
+    <!-- Create a shortcut on the desktop -->
+    <StandardDirectory Id="DesktopFolder" />
+    <Component Id="DesktopShortcut" Guid="3c8e6e9a-7f0c-4a2f-9f32-6c6a1f7f5e2b" Directory="DesktopFolder">
+      <Shortcut Id="AppShortcut" Directory="DesktopFolder" Name="Renkim Sumatin" Target="[INSTALLFOLDER]renkimsumatin.exe" WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="DesktopFolderCleanup" Directory="DesktopFolder" On="uninstall" />
+      <RegistryValue Root="HKCU" Key="Software\Renkim\RenkimSumatin" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+    </Component>
+    <Feature Id="Shortcuts" Title="Shortcuts">
+      <ComponentRef Id="DesktopShortcut" />
+    </Feature>
+  </Package>
+</Wix>

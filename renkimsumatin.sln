@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36429.23
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "renkimsumatin", "renkimsumatin.csproj", "{19CB25A6-1668-4F79-A88E-B8D5B1F74830}"
+EndProject
+Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "RenkimSumatin.Package", "Packaging\RenkimSumatin.Package\RenkimSumatin.Package.wapproj", "{8F8F6E9C-5C2E-4F7F-8B3D-9B2D0A1B7E1A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{19CB25A6-1668-4F79-A88E-B8D5B1F74830}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19CB25A6-1668-4F79-A88E-B8D5B1F74830}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19CB25A6-1668-4F79-A88E-B8D5B1F74830}.Debug|x64.ActiveCfg = Debug|x64
+		{19CB25A6-1668-4F79-A88E-B8D5B1F74830}.Debug|x64.Build.0 = Debug|x64
+		{19CB25A6-1668-4F79-A88E-B8D5B1F74830}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19CB25A6-1668-4F79-A88E-B8D5B1F74830}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19CB25A6-1668-4F79-A88E-B8D5B1F74830}.Release|x64.ActiveCfg = Release|x64
+		{19CB25A6-1668-4F79-A88E-B8D5B1F74830}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13F9C8E3-5FBF-4808-BA84-A7A9D0A0298F}
+	EndGlobalSection
+EndGlobal

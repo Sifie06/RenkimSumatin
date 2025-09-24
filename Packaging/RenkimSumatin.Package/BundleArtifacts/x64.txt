@@ -1,0 +1,2 @@
+MainPackage=C:\Users\Maiman\source\repos\RenkimSumatin\Packaging\RenkimSumatin.Package\bin\x64\Release\RenkimSumatin.Package_1.0.0.0_x64.msix
+SymbolPackage=C:\Users\Maiman\source\repos\RenkimSumatin\Packaging\RenkimSumatin.Package\obj\x64\Release\Symbols\RenkimSumatin.Package_1.0.0.0_x64.appxsym

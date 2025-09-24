@@ -1,0 +1,75 @@
+name: Build and Package
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build .NET and WiX MSI
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore dependencies (WPF app)
+        run: dotnet restore ./renkimsumatin.csproj
+
+      - name: Restore dependencies (Installer)
+        run: dotnet restore ./Installer/Installer.wixproj
+
+      - name: Build WPF app (Release)
+        run: dotnet build ./renkimsumatin.csproj -c Release --no-restore
+
+      - name: Build MSI (WiX)
+        run: dotnet build ./Installer/Installer.wixproj -c Release --no-restore
+
+      - name: Publish WPF app self-contained (win-x64)
+        run: >-
+          dotnet publish ./renkimsumatin.csproj -c Release
+          -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false
+          -o ./publish/win-x64
+
+      - name: Upload MSI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RenkimSumatin-Installer
+          path: |
+            Installer/bin/x64/Release/*.msi
+
+      - name: Upload Published App (win-x64)
+        uses: actions/upload-artifact@v4
+        with:
+          name: RenkimSumatin-Publish-win-x64
+          path: publish/win-x64
+
+  release:
+    name: Release on tag
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: windows-latest
+    steps:
+      - name: Download MSI artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: RenkimSumatin-Installer
+          path: ./artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.msi
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

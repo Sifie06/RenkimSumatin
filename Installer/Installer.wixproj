@@ -1,0 +1,29 @@
+<Project Sdk="WixToolset.Sdk/4.0.4">
+  <PropertyGroup>
+    <OutputType>Package</OutputType>
+    <Platform>x64</Platform>
+    <PackageIcon>app.ico</PackageIcon>
+    <CompanyName>Renkim</CompanyName>
+    <ProductName>Renkim Sumatin</ProductName>
+    <Version>1.0.0.0</Version>
+    <Description>Renkim Sumatin WPF Application</Description>
+  </PropertyGroup>
+
+  <!-- Publish the WPF app before building MSI -->
+  <Target Name="PublishApp" BeforeTargets="Build">
+    <MSBuild Projects="..\renkimsumatin.csproj"
+             Targets="Publish"
+             Properties="Configuration=Release;RuntimeIdentifier=win-x64;SelfContained=true;PublishSingleFile=true;PublishTrimmed=false;PublishDir=$(MSBuildThisFileDirectory)AppPublish\" />
+  </Target>
+
+  <ItemGroup>
+    <WixSource Include="ProductManual.wxs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\Resources\app.ico">
+      <Link>app.ico</Link>
+      <PackagePath>app.ico</PackagePath>
+    </Content>
+  </ItemGroup>
+</Project>

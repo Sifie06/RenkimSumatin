@@ -1,0 +1,105 @@
+<UserControl x:Class="renkimsumatin.Views.ReportsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:renkimsumatin.Converters"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+	<UserControl.Resources>
+		<converters:NullToNAConverter x:Key="NullToNAConverter"/>
+        <!-- Smaller refresh button style (top-right, orange) -->
+        <Style x:Key="RefreshButtonStyle" TargetType="Button">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="4,2"/>
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="MinWidth" Value="60"/>
+            <Setter Property="Margin" Value="6,0,0,0"/>
+            <Setter Property="Background" Value="#F59E0B"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+	</UserControl.Resources>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<!-- Header -->
+        <DockPanel Margin="10">
+            <TextBlock Text="Report Management" FontSize="20" FontWeight="Bold" DockPanel.Dock="Left"/>
+            <Button Content="Refresh" Command="{Binding RefreshCommand}" DockPanel.Dock="Right"
+                    Style="{StaticResource RefreshButtonStyle}" VerticalAlignment="Top" HorizontalAlignment="Right"/>
+        </DockPanel>
+
+        <!-- Ranking Selection -->
+        <Border Grid.Row="1" Background="White" CornerRadius="5" Margin="10" Padding="10">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Ranking Scope"/>
+                    <ComboBox ItemsSource="{Binding RankingScopes}" SelectedItem="{Binding RankingScope}" Width="180"/>
+                </StackPanel>
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Subject"/>
+                    <ComboBox ItemsSource="{Binding RankingSubjects}" DisplayMemberPath="Name" SelectedValuePath="Id" Width="200"
+                              SelectedValue="{Binding SelectedRankingSubjectId}"/>
+                </StackPanel>
+                <StackPanel Margin="0,0,10,0">
+                    <TextBlock Text="Assessment"/>
+                    <ComboBox ItemsSource="{Binding FilteredRankingAssessments}" DisplayMemberPath="Name" SelectedValuePath="Id" Width="200"
+                              SelectedValue="{Binding SelectedRankingAssessmentId}"/>
+                </StackPanel>
+                <Button Content="See Ranks" Command="{Binding ExportRankingCommand}" Background="#4F46E5" Foreground="White" Padding="10,5"/>
+            </StackPanel>
+        </Border>
+
+		<!-- Export Buttons -->
+		<Border Grid.Row="2" Background="White" CornerRadius="5" Margin="10" Padding="10">
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Export CSV" Command="{Binding ExportCSVCommand}" Margin="0,0,10,0"
+                        Background="#10B981" Foreground="White" Padding="10,5"/>
+				<Button Content="Export PDF" Command="{Binding ExportPDFCommand}" Margin="0,0,10,0"
+                        Background="#EF4444" Foreground="White" Padding="10,5"/>
+
+                <!-- New: Export Ranks buttons -->
+                <Button Content="Export Ranks CSV" Command="{Binding ExportRanksCSVCommand}" Margin="10,0,10,0"
+                        Background="#0EA5E9" Foreground="White" Padding="10,5"/>
+				<Button Content="Export Ranks PDF" Command="{Binding ExportRanksPDFCommand}" Margin="0,0,0,0"
+                        Background="#0284C7" Foreground="White" Padding="10,5"/>
+			</StackPanel>
+		</Border>
+
+		<!-- Report Table -->
+		<Border Grid.Row="3" Background="White" CornerRadius="5" Margin="10" Padding="10">
+			<ListView ItemsSource="{Binding ReportData}">
+				<ListView.View>
+					<GridView>
+                        <GridViewColumn Header="Rank" DisplayMemberBinding="{Binding Rank}" Width="60"/>
+						<GridViewColumn Header="Student Name" DisplayMemberBinding="{Binding StudentName}" Width="150"/>
+						<GridViewColumn Header="Student ID" DisplayMemberBinding="{Binding StudentId}" Width="100"/>
+						<GridViewColumn Header="Subject" DisplayMemberBinding="{Binding SubjectName}" Width="120"/>
+						<GridViewColumn Header="Assessment" DisplayMemberBinding="{Binding AssessmentName}" Width="120"/>
+						<GridViewColumn Header="Score" Width="100">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding MarksObtained, Converter={StaticResource NullToNAConverter}}"
+                                               HorizontalAlignment="Right"/>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+						<GridViewColumn Header="Grade" Width="80">
+							<GridViewColumn.CellTemplate>
+								<DataTemplate>
+									<TextBlock Text="{Binding Grade}" HorizontalAlignment="Center"/>
+								</DataTemplate>
+							</GridViewColumn.CellTemplate>
+						</GridViewColumn>
+					</GridView>
+				</ListView.View>
+			</ListView>
+		</Border>
+	</Grid>
+</UserControl>
