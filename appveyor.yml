@@ -1,0 +1,97 @@
+name: Build and Package
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build .NET and WiX MSI
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Dotnet info
+        run: dotnet --info
+
+      - name: Restore dependencies (WPF app)
+        run: dotnet restore ./renkimsumatin.csproj
+
+      - name: Restore dependencies (Installer)
+        run: dotnet restore ./Installer/Installer.wixproj
+
+      - name: Publish WPF app files for MSI (win-x64, self-contained)
+        run: >-
+          dotnet publish ./renkimsumatin.csproj -c Release
+          -r win-x64 --self-contained true /p:UseAppHost=true /p:PublishSingleFile=false /p:PublishTrimmed=false
+          -o ./Installer/AppPublish
+
+      - name: Normalize EXE name to expected 'renkimsumatin.exe'
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem -Path Installer/AppPublish -Filter *.exe | Select-Object -First 1
+          if (-not $exe) { throw 'No EXE found in Installer/AppPublish after publish.' }
+          if ($exe.Name -ne 'renkimsumatin.exe') {
+            Copy-Item $exe.FullName (Join-Path $exe.DirectoryName 'renkimsumatin.exe') -Force
+          }
+
+      - name: List AppPublish directory
+        shell: pwsh
+        run: |
+          Write-Host "Listing Installer/AppPublish:";
+          Get-ChildItem -Recurse -File Installer/AppPublish | Select-Object FullName
+
+      - name: Verify AppPublish content
+        shell: pwsh
+        run: |
+          if (-not (Test-Path 'Installer/AppPublish/renkimsumatin.exe')) {
+            throw 'renkimsumatin.exe was not published to Installer/AppPublish. See previous step for listing.'
+          }
+
+      - name: Build MSI (WiX)
+        run: dotnet build ./Installer/Installer.wixproj -c Release --no-restore
+
+      - name: Upload MSI artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RenkimSumatin-Installer
+          path: |
+            Installer/bin/x64/Release/*.msi
+
+      - name: Upload AppPublish folder (for debugging)
+        uses: actions/upload-artifact@v4
+        with:
+          name: AppPublish-Contents
+          path: Installer/AppPublish
+
+  release:
+    name: Release on tag
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: windows-latest
+    steps:
+      - name: Download MSI artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: RenkimSumatin-Installer
+          path: ./artifacts
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/*.msi
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
