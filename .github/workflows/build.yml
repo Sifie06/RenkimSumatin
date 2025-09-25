@@ -62,18 +62,44 @@ jobs:
       - name: Build MSI (WiX)
         run: dotnet build ./Installer/Installer.wixproj -c Release --no-restore
 
+      - name: Display MSI build results
+        shell: pwsh
+        run: |
+          Write-Host "MSI build completed successfully!" -ForegroundColor Green
+          $msiFiles = Get-ChildItem -Path "Installer/bin/x64/Release" -Filter "*.msi"
+          foreach ($msi in $msiFiles) {
+            Write-Host "📦 Created: $($msi.Name) ($('{0:N2}' -f ($msi.Length / 1MB)) MB)" -ForegroundColor Cyan
+            Write-Host "   Path: $($msi.FullName)" -ForegroundColor Gray
+          }
+
       - name: Upload MSI artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RenkimSumatin-Installer
+          name: RenkimSumatin-Installer-v${{ github.run_number }}
           path: |
             Installer/bin/x64/Release/*.msi
+          retention-days: 90
 
       - name: Upload AppPublish folder (for debugging)
         uses: actions/upload-artifact@v4
         with:
-          name: AppPublish-Contents
+          name: AppPublish-Contents-v${{ github.run_number }}
           path: Installer/AppPublish
+          retention-days: 30
+
+      - name: Build Summary
+        shell: pwsh
+        run: |
+          Write-Host ""
+          Write-Host "🎉 Build completed successfully!" -ForegroundColor Green
+          Write-Host "📦 MSI Installer artifact: RenkimSumatin-Installer-v${{ github.run_number }}" -ForegroundColor Cyan
+          Write-Host "🔍 Debug files artifact: AppPublish-Contents-v${{ github.run_number }}" -ForegroundColor Cyan
+          Write-Host ""
+          Write-Host "To download the installer:" -ForegroundColor Yellow
+          Write-Host "1. Go to the Actions tab: https://github.com/${{ github.repository }}/actions" -ForegroundColor White
+          Write-Host "2. Click on this workflow run" -ForegroundColor White
+          Write-Host "3. Download the 'RenkimSumatin-Installer-v${{ github.run_number }}' artifact" -ForegroundColor White
+          Write-Host "4. Extract the ZIP and run the MSI file" -ForegroundColor White
 
   release:
     name: Release on tag

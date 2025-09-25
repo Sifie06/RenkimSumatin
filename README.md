@@ -16,7 +16,7 @@ WPF .NET 8 application with WiX Toolset 4 MSI packaging. This repo includes a co
 
 1. **Navigate to Actions**: Go to the [Actions tab](https://github.com/Sifie06/RenkimSumatin/actions) of this repository
 2. **Find Latest Build**: Click on the most recent successful "Build and Package" workflow run
-3. **Download Artifact**: Scroll down to the "Artifacts" section and download `RenkimSumatin-Installer`
+3. **Download Artifact**: Scroll down to the "Artifacts" section and download `RenkimSumatin-Installer-v[X]` (where X is the build number)
 4. **Extract and Install**: Extract the ZIP file and run the `.msi` file to install the application
 
 ### Option 2: Download from Releases (For Tagged Versions)
@@ -80,8 +80,8 @@ The automated build process includes:
 
 ### Artifacts Created
 
-- **RenkimSumatin-Installer**: Contains the MSI installer file
-- **AppPublish-Contents**: Contains published application files (for debugging)
+- **RenkimSumatin-Installer-v[X]**: Contains the MSI installer file (retained for 90 days)
+- **AppPublish-Contents-v[X]**: Contains published application files for debugging (retained for 30 days)
 
 ## Installation Features
 
